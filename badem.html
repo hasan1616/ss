@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Badem İçin 🐱</title>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fff0f5;
+    --accent: #ff85a1;
+    --text: #5a2d4c;
+    --card: #ffe4f0;
+    --shadow: #ffb3cb;
+    --star: #ffd700;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Nunito', sans-serif;
+    overflow: hidden;
+    transition: background 1.2s ease, color 1.2s ease;
+    position: relative;
+  }
+
+  /* Floating hearts / stars background */
+  .bg-particles {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .particle {
+    position: absolute;
+    animation: floatUp linear infinite;
+    opacity: 0;
+    font-size: 1.4rem;
+    user-select: none;
+  }
+  @keyframes floatUp {
+    0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 0.7; }
+    100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+    padding: 32px 20px;
+  }
+
+  /* Title */
+  .title {
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(2.2rem, 7vw, 4.5rem);
+    color: var(--accent);
+    text-shadow: 3px 3px 0 var(--shadow), 6px 6px 0 rgba(0,0,0,0.05);
+    animation: titleBounce 2s ease infinite alternate;
+    transition: color 1.2s ease, text-shadow 1.2s ease;
+    letter-spacing: 1px;
+  }
+  @keyframes titleBounce {
+    0%   { transform: translateY(0) rotate(-1deg); }
+    100% { transform: translateY(-8px) rotate(1deg); }
+  }
+
+  /* Tekir Cat SVG container */
+  .cat-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    cursor: pointer;
+    filter: drop-shadow(0 8px 24px var(--shadow));
+    transition: filter 1.2s ease;
+    animation: catFloat 3s ease-in-out infinite;
+  }
+  @keyframes catFloat {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-14px); }
+  }
+  .cat-wrap:hover { animation: catWiggle 0.4s ease infinite; }
+  @keyframes catWiggle {
+    0%   { transform: rotate(-5deg) scale(1.07); }
+    50%  { transform: rotate(5deg) scale(1.07); }
+    100% { transform: rotate(-5deg) scale(1.07); }
+  }
+
+  /* hearts on click */
+  .heart-burst {
+    position: fixed;
+    font-size: 1.6rem;
+    pointer-events: none;
+    z-index: 999;
+    animation: burstAway 0.9s ease forwards;
+  }
+  @keyframes burstAway {
+    0%   { opacity: 1; transform: translate(0,0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.3); }
+  }
+
+  /* Message card */
+  .message-card {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 20px 32px;
+    max-width: 380px;
+    color: var(--text);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: background 1.2s ease, color 1.2s ease, box-shadow 1.2s ease;
+    font-weight: 700;
+    border: 2px dashed var(--shadow);
+  }
+
+  /* Color theme buttons */
+  .themes {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 8px;
+  }
+  .theme-btn {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    border: 3px solid white;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+    transition: transform 0.2s, box-shadow 0.2s;
+    position: relative;
+  }
+  .theme-btn:hover { transform: scale(1.2); box-shadow: 0 4px 14px rgba(0,0,0,0.25); }
+  .theme-btn.active::after {
+    content: '✓';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%,-50%);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+  }
+
+  /* Paw print counter */
+  .paw-counter {
+    font-size: 0.95rem;
+    color: var(--text);
+    opacity: 0.7;
+    transition: color 1.2s;
+    font-weight: 700;
+  }
+
+  /* Meow button */
+  .meow-btn {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    padding: 12px 36px;
+    font-size: 1.1rem;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 900;
+    cursor: pointer;
+    box-shadow: 0 4px 15px var(--shadow);
+    transition: background 1.2s ease, box-shadow 1.2s ease, transform 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .meow-btn:hover { transform: scale(1.07); }
+  .meow-btn:active { transform: scale(0.97); }
+
+  /* Meow popup */
+  .meow-popup {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(2rem, 8vw, 5rem);
+    color: var(--accent);
+    text-shadow: 4px 4px 0 var(--shadow);
+    z-index: 100;
+    pointer-events: none;
+    animation: none;
+    transition: color 0.3s, text-shadow 0.3s;
+  }
+  .meow-popup.pop {
+    animation: meowPop 0.9s cubic-bezier(.17,.67,.35,1.4) forwards;
+  }
+  @keyframes meowPop {
+    0%   { transform: translate(-50%,-50%) scale(0) rotate(-15deg); opacity: 0; }
+    40%  { transform: translate(-50%,-50%) scale(1.15) rotate(5deg); opacity: 1; }
+    70%  { transform: translate(-50%,-50%) scale(1) rotate(-2deg); opacity: 1; }
+    100% { transform: translate(-50%,-60%) scale(0.9) rotate(0deg); opacity: 0; }
+  }
+
+  /* Tail wag */
+  .cat-tail { transform-origin: 90% 90%; }
+  .cat-wrap:hover .cat-tail { animation: tailWag 0.3s ease infinite alternate; }
+  @keyframes tailWag {
+    0%   { transform: rotate(-15deg); }
+    100% { transform: rotate(15deg); }
+  }
+
+  /* eye blink */
+  .eye-left, .eye-right { animation: blink 4s ease infinite; }
+  @keyframes blink {
+    0%,96%,100% { transform: scaleY(1); }
+    98%          { transform: scaleY(0.05); }
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    color: var(--text);
+    opacity: 0.65;
+    font-weight: 700;
+    transition: color 1.2s;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+
+<!-- Background particles -->
+<div class="bg-particles" id="particles"></div>
+
+<!-- Meow popup -->
+<div class="meow-popup" id="meowPopup">Miyav! 🐾</div>
+
+<div class="container">
+  <div class="title">BADEM İÇİN 🐾</div>
+  <div class="subtitle">Dünya'nın en güzel tekir kedisi ✨</div>
+
+  <!-- Tekir Cat SVG -->
+  <div class="cat-wrap" id="catWrap" onclick="catClick(event)" title="Tıkla!">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" width="220" height="220">
+      <!-- Body -->
+      <ellipse cx="100" cy="140" rx="52" ry="45" fill="#d0d0d0"/>
+      <!-- Tekir stripes on body -->
+      <ellipse cx="100" cy="140" rx="52" ry="45" fill="none" stroke="#a0a0a0" stroke-width="0" />
+      <path d="M78 115 Q82 140 80 165" stroke="#a0a0a0" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M90 112 Q93 140 91 167" stroke="#a0a0a0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M110 112 Q107 140 109 167" stroke="#a0a0a0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M122 115 Q118 140 120 165" stroke="#a0a0a0" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+      <!-- Tail -->
+      <path class="cat-tail" d="M148 155 Q185 145 180 110 Q175 90 162 100" stroke="#c8c8c8" stroke-width="12" fill="none" stroke-linecap="round"/>
+      <path class="cat-tail" d="M148 155 Q185 145 180 110 Q175 90 162 100" stroke="#a8a8a8" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="8 6"/>
+
+      <!-- Head -->
+      <circle cx="100" cy="82" r="42" fill="#d8d8d8"/>
+      <!-- Tekir stripes on head -->
+      <path d="M85 55 Q88 68 86 78" stroke="#b0b0b0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M100 50 Q100 64 100 74" stroke="#b0b0b0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M115 55 Q112 68 114 78" stroke="#b0b0b0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+      <!-- Ears -->
+      <polygon points="68,52 56,24 85,44" fill="#d0d0d0"/>
+      <polygon points="68,52 60,28 82,46" fill="#f4b8c8"/>
+      <polygon points="132,52 144,24 115,44" fill="#d0d0d0"/>
+      <polygon points="132,52 140,28 118,46" fill="#f4b8c8"/>
+
+      <!-- Face white muzzle -->
+      <ellipse cx="100" cy="95" rx="22" ry="16" fill="#efefef"/>
+
+      <!-- Eyes -->
+      <g class="eye-left">
+        <ellipse cx="85" cy="78" rx="9" ry="10" fill="#fff"/>
+        <ellipse cx="85" cy="79" rx="5" ry="6" fill="#2d5a27"/>
+        <ellipse cx="85" cy="79" rx="3" ry="4" fill="#111"/>
+        <circle cx="87" cy="77" r="1.8" fill="white"/>
+      </g>
+      <g class="eye-right">
+        <ellipse cx="115" cy="78" rx="9" ry="10" fill="#fff"/>
+        <ellipse cx="115" cy="79" rx="5" ry="6" fill="#2d5a27"/>
+        <ellipse cx="115" cy="79" rx="3" ry="4" fill="#111"/>
+        <circle cx="117" cy="77" r="1.8" fill="white"/>
+      </g>
+
+      <!-- Nose -->
+      <path d="M96 91 L100 94 L104 91 Q100 88 96 91Z" fill="#ff9eb5"/>
+      <!-- Mouth -->
+      <path d="M100 94 Q95 100 90 98" stroke="#c0c0c0" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      <path d="M100 94 Q105 100 110 98" stroke="#c0c0c0" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+
+      <!-- Whiskers -->
+      <line x1="60" y1="90" x2="88" y2="93" stroke="#888" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="60" y1="95" x2="88" y2="95" stroke="#888" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="62" y1="100" x2="88" y2="97" stroke="#888" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="140" y1="90" x2="112" y2="93" stroke="#888" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="140" y1="95" x2="112" y2="95" stroke="#888" stroke-width="1.2" stroke-linecap="round"/>
+      <line x1="138" y1="100" x2="112" y2="97" stroke="#888" stroke-width="1.2" stroke-linecap="round"/>
+
+      <!-- Front paws -->
+      <ellipse cx="78" cy="178" rx="20" ry="12" fill="#d0d0d0"/>
+      <ellipse cx="78" cy="178" rx="20" ry="12" fill="none" stroke="#b8b8b8" stroke-width="1"/>
+      <!-- paw toes -->
+      <circle cx="70" cy="182" r="4" fill="#c8c8c8"/>
+      <circle cx="78" cy="184" r="4" fill="#c8c8c8"/>
+      <circle cx="86" cy="182" r="4" fill="#c8c8c8"/>
+
+      <ellipse cx="122" cy="178" rx="20" ry="12" fill="#d0d0d0"/>
+      <ellipse cx="122" cy="178" rx="20" ry="12" fill="none" stroke="#b8b8b8" stroke-width="1"/>
+      <circle cx="114" cy="182" r="4" fill="#c8c8c8"/>
+      <circle cx="122" cy="184" r="4" fill="#c8c8c8"/>
+      <circle cx="130" cy="182" r="4" fill="#c8c8c8"/>
+
+      <!-- Collar -->
+      <path d="M60 108 Q100 120 140 108" stroke="#ff6b9d" stroke-width="7" fill="none" stroke-linecap="round"/>
+      <!-- Bell -->
+      <circle cx="100" cy="118" r="6" fill="#ffd700"/>
+      <path d="M98 121 Q100 124 102 121" stroke="#b8860b" stroke-width="1.5" fill="none"/>
+    </svg>
+  </div>
+
+  <div class="message-card" id="msgCard">
+    🐾 Tıkla ve Badem'e sevgini göster!<br>
+    Dünya'nın en tatlı tekiri seni seviyor 🧡
+  </div>
+
+  <button class="meow-btn" onclick="playMeow()">🐱 Miyavla!</button>
+
+  <div class="paw-counter" id="pawCounter">Tıklama: 0 🐾</div>
+
+  <!-- Color themes -->
+  <div class="themes">
+    <div class="theme-btn active" style="background:linear-gradient(135deg,#ff85a1,#ffb3cb)" onclick="setTheme('pink')" title="Pembe"></div>
+    <div class="theme-btn" style="background:linear-gradient(135deg,#85c1e9,#aed6f1)" onclick="setTheme('blue')" title="Mavi"></div>
+    <div class="theme-btn" style="background:linear-gradient(135deg,#a9dfbf,#82e0aa)" onclick="setTheme('green')" title="Yeşil"></div>
+    <div class="theme-btn" style="background:linear-gradient(135deg,#f9ca24,#f0932b)" onclick="setTheme('yellow')" title="Sarı"></div>
+    <div class="theme-btn" style="background:linear-gradient(135deg,#c39bd3,#a569bd)" onclick="setTheme('purple')" title="Mor"></div>
+    <div class="theme-btn" style="background:linear-gradient(135deg,#f1948a,#e74c3c)" onclick="setTheme('red')" title="Kırmızı"></div>
+    <div class="theme-btn" style="background:linear-gradient(135deg,#1a1a2e,#16213e)" onclick="setTheme('dark')" title="Gece"></div>
+  </div>
+</div>
+
+<script>
+  // --- Themes ---
+  const themes = {
+    pink:   { bg:'#fff0f5', accent:'#ff85a1', text:'#5a2d4c', card:'#ffe4f0', shadow:'#ffb3cb' },
+    blue:   { bg:'#eaf4ff', accent:'#3498db', text:'#1a3c5e', card:'#d6eaf8', shadow:'#aed6f1' },
+    green:  { bg:'#eafaf1', accent:'#27ae60', text:'#145a32', card:'#d5f5e3', shadow:'#a9dfbf' },
+    yellow: { bg:'#fffde7', accent:'#f0932b', text:'#7d4e00', card:'#fff9c4', shadow:'#ffe082' },
+    purple: { bg:'#f5eeff', accent:'#9b59b6', text:'#4a235a', card:'#e8daef', shadow:'#d2b4de' },
+    red:    { bg:'#fff5f5', accent:'#e74c3c', text:'#6e1010', card:'#fde8e8', shadow:'#f1948a' },
+    dark:   { bg:'#1a1a2e', accent:'#e94560', text:'#eee',   card:'#16213e', shadow:'#0f3460' },
+  };
+
+  const messages = [
+    "🐾 Miyav miyav! Badem seni çok seviyor!",
+    "😸 Tırr tırr tırr... en sevdiğin miyav bu mu?",
+    "🐱 Pati pati! Badem mutlu!",
+    "✨ Badem: 'Biraz daha tıkla, razıyım!'",
+    "🧡 Dünyanın en güzel tekiri seninle!",
+    "😺 Fısıldıyor: 'Mama vakti mi?'",
+    "🐾 Badem senin için pati sallıyor!",
+    "💛 Tekir kral: Badem tahtında!",
+    "🌟 Badem en mutlu kedi bu an!",
+    "😻 Seni görünce gözleri ışıldıyor!",
+  ];
+
+  let clicks = 0;
+  let currentTheme = 'pink';
+
+  function setTheme(name) {
+    const t = themes[name];
+    document.documentElement.style.setProperty('--bg', t.bg);
+    document.documentElement.style.setProperty('--accent', t.accent);
+    document.documentElement.style.setProperty('--text', t.text);
+    document.documentElement.style.setProperty('--card', t.card);
+    document.documentElement.style.setProperty('--shadow', t.shadow);
+    currentTheme = name;
+    document.querySelectorAll('.theme-btn').forEach((b,i) => b.classList.remove('active'));
+    const idx = Object.keys(themes).indexOf(name);
+    document.querySelectorAll('.theme-btn')[idx].classList.add('active');
+  }
+
+  function catClick(e) {
+    clicks++;
+    document.getElementById('pawCounter').textContent = `Tıklama: ${clicks} 🐾`;
+    const msg = messages[clicks % messages.length];
+    document.getElementById('msgCard').innerHTML = msg;
+    spawnHearts(e.clientX, e.clientY);
+  }
+
+  function spawnHearts(x, y) {
+    const emojis = ['❤️','🧡','💛','💚','💙','💜','🐾','⭐','✨','💕'];
+    for (let i = 0; i < 8; i++) {
+      const el = document.createElement('div');
+      el.className = 'heart-burst';
+      el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      const angle = (Math.random() * 360) * Math.PI / 180;
+      const dist = 60 + Math.random() * 80;
+      el.style.setProperty('--dx', Math.cos(angle)*dist + 'px');
+      el.style.setProperty('--dy', Math.sin(angle)*dist + 'px');
+      el.style.animationDelay = (Math.random()*0.2) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1100);
+    }
+  }
+
+  const meowTexts = ['Miyav! 😺', 'Mrrrr... 😸', 'Miau! 🐱', 'Prrrr... 💤', 'MIYAV! 😾', 'Tıss! 🙀'];
+  let meowIdx = 0;
+  function playMeow() {
+    const popup = document.getElementById('meowPopup');
+    popup.textContent = meowTexts[meowIdx % meowTexts.length];
+    meowIdx++;
+    popup.classList.remove('pop');
+    void popup.offsetWidth;
+    popup.classList.add('pop');
+    setTimeout(() => popup.classList.remove('pop'), 950);
+  }
+
+  // Background particles
+  function makeParticles() {
+    const p = document.getElementById('particles');
+    const emojis = ['🐾','❤️','✨','⭐','🌸','💕','🐟','🎀','🌟','💛'];
+    for (let i = 0; i < 18; i++) {
+      const el = document.createElement('div');
+      el.className = 'particle';
+      el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      el.style.left = (Math.random()*100) + 'vw';
+      el.style.animationDuration = (8 + Math.random()*10) + 's';
+      el.style.animationDelay = (Math.random()*12) + 's';
+      el.style.fontSize = (1 + Math.random()*1.2) + 'rem';
+      p.appendChild(el);
+    }
+  }
+  makeParticles();
+</script>
+</body>
+</html>
